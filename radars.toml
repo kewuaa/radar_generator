@@ -1,0 +1,60 @@
+start = 0
+
+[[radar]]
+loss_rate = 0.1
+
+[radar.pri]
+value = 1000
+jitter_rate = 0.3
+
+[radar.doa]
+value = 92
+std = 0.01
+
+[radar.rf]
+value = [1000, 2000]
+std = 0.1
+group_size = 5
+
+[radar.pw]
+value = 1
+std = 0.01
+
+
+[[radar]]
+
+[radar.pri]
+value = [10, 20, 15]
+std = 0.01
+
+[radar.doa]
+value = 90
+std = 0.01
+
+[radar.rf]
+value = [1000, 2000]
+std = 0.1
+
+[radar.pw]
+value = 2
+std = 0.01
+
+
+[[radar]]
+
+[radar.pri]
+value = 50
+std = 0.01
+
+[radar.doa]
+value = 95
+std = 0.1
+
+[radar.rf]
+value = [3000, 4000, 5000]
+std = 1
+random = true
+
+[radar.pw]
+value = 1
+std = 0.01
