@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Iterator
 
 try:
-    import tomlib as toml  #pyright: ignore[reportMissingImports]
+    import tomllib as toml  #pyright: ignore[reportMissingImports]
 except ImportError:
     import tomli as toml
 #endtry
