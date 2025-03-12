@@ -52,8 +52,8 @@ class RadarConfigPanel(QFrame):
         vbox = QVBoxLayout()
         self.setLayout(vbox)
 
-        self._start_toa = start_pri_input = utils.InputLayout("start toa")
-        vbox.addLayout(start_pri_input)
+        self._start_toa = start_toa_input = utils.InputLayout("start toa")
+        vbox.addLayout(start_toa_input)
 
         self._loss_rate = loss_rate_input = utils.InputLayout("loss rate")
         vbox.addLayout(loss_rate_input)
@@ -86,7 +86,7 @@ class RadarConfigPanel(QFrame):
 
     def snapshot(self) -> dict:
         return {
-            "start_pri": self._start_toa.get(),
+            "start_toa": self._start_toa.get(),
             "loss_rate": self._loss_rate.get(),
             "pri": self._pri.snapshot(),
             "doa": self._doa.snapshot(),
@@ -97,7 +97,7 @@ class RadarConfigPanel(QFrame):
     #enddef
 
     def load_snapshot(self, snapshot: dict) -> None:
-        self._start_toa.set(snapshot.get("start_pri", ""))
+        self._start_toa.set(snapshot.get("start_toa", ""))
         self._loss_rate.set(snapshot.get("loss_rate", ""))
         self._pri.load_snapshot(snapshot.get("pri", {}))
         self._doa.load_snapshot(snapshot.get("doa", {}))
@@ -107,9 +107,9 @@ class RadarConfigPanel(QFrame):
     #enddef
 
     def parse_snapshot(self, snapshot: dict) -> Radar:
-        start_pri = 0
-        if snapshot.get("start_pri"):
-            start_pri = float(snapshot["start_pri"])
+        start_toa = 0
+        if snapshot.get("start_toa"):
+            start_toa = float(snapshot["start_toa"])
         #endif
         loss_rate = None
         if snapshot.get("loss_rate"):
@@ -117,7 +117,7 @@ class RadarConfigPanel(QFrame):
         #endif
         return Radar(
             -1,
-            start_pri,
+            start_toa,
             self._pri.parse_snapshot(snapshot["pri"]),
             self._doa.parse_snapshot(snapshot["doa"]),
             self._rf.parse_snapshot(snapshot["rf"]),
