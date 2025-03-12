@@ -63,9 +63,8 @@ class Generator:
         #endif
 
         generator = cls()
-        generator._radars = []
-        start: float = config.get("start", 0)
         for i, radar in enumerate(radars):
+            start: float = radar.get("start_toa", 0)
             pri_config: dict | None = radar.get("pri")
             doa_config: dict | None = radar.get("doa")
             rf_config: dict | None = radar.get("rf")

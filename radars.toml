@@ -1,6 +1,5 @@
-start = 0
-
 [[radar]]
+start_toa = 0
 loss_rate = 0.1
 
 [radar.pri]
