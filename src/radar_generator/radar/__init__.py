@@ -2,11 +2,7 @@ import heapq
 from pathlib import Path
 from typing import Iterator
 
-try:
-    import tomllib as toml  #pyright: ignore[reportMissingImports]
-except ImportError:
-    import tomli as toml
-#endtry
+import tomli
 
 from .doa import DOA
 from .pa import PA
@@ -52,7 +48,7 @@ class Generator:
             raise RuntimeError(f"`{path}` not exists")
         #endif
         with open(path, "rb") as f:
-            config = toml.load(f)
+            config = tomli.load(f)
         #endwith
         if not isinstance(config, dict):
             raise RuntimeError("load config failed")

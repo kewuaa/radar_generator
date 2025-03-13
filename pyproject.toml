@@ -8,7 +8,7 @@ dependencies = [
     "loguru>=0.7.3",
     "pyqtgraph>=0.13.7",
     "pyside6-essentials>=6.8.2.1",
-    "tomli>=2.2.1 ; python_full_version < '3.11'",
+    "tomli>=2.2.1",
 ]
 
 [dependency-groups]
