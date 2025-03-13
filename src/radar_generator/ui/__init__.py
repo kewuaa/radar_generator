@@ -290,11 +290,17 @@ class RadarGeneratorApp(QMainWindow):
     _radar_panel: QListWidget
     _radar_config_panel: RadarConfigPanel
     _plot_widget: pg.GraphicsLayoutWidget
+    _radar_id: int = 0
 
     def __init__(self) -> None:
         super().__init__()
         self._radars = []
         self._setup_ui()
+    #enddef
+
+    def _get_radar_id(self) -> int:
+        self._radar_id += 1
+        return self._radar_id
     #enddef
 
     def _setup_ui(self) -> None:
@@ -321,7 +327,6 @@ class RadarGeneratorApp(QMainWindow):
     def _setup_radar_panel(self, panel: QListWidget) -> None:
         panel.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
 
-        radar_id = 0
         def new_radar() -> None:
             if not self._radar_config_panel.isEnabled():
                 self._radar_config_panel.setEnabled(True)
@@ -329,9 +334,7 @@ class RadarGeneratorApp(QMainWindow):
 
             self._radars.append({})
 
-            nonlocal radar_id
-            radar_id += 1
-            self._radar_panel.addItem(f"radar{radar_id}")
+            self._radar_panel.addItem(f"radar{self._get_radar_id()}")
             self._radar_panel.setCurrentRow(len(self._radars)-1)
 
             # clear after setting current row, otherwise previous snapshot will be empty
