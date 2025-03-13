@@ -342,9 +342,6 @@ class RadarGeneratorApp(QMainWindow):
 
             self._radar_panel.addItem(f"radar{self._get_radar_id()}")
             self._radar_panel.setCurrentRow(len(self._radars)-1)
-
-            # clear after setting current row, otherwise previous snapshot will be empty
-            self._radar_config_panel.clear()
         #enddef
 
         def delete_radar() -> None:
