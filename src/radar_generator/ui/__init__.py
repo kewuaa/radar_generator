@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pyqtgraph as pg
 from pyqtgraph.graphicsItems.PlotDataItem import ScatterPlotItem
-from pyqtgraph.Qt.QtCore import QObject, QPoint, QThread, Signal
+from pyqtgraph.Qt.QtCore import QObject, QPoint, QThread, Signal, SignalInstance
 from pyqtgraph.Qt.QtWidgets import QFileDialog
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
@@ -243,7 +243,7 @@ class GenerateWorker(QObject):
     save_path: str
     pulse_num: int | None
     end_toa: float | None
-    done = Signal()
+    done: SignalInstance
 
     def __init__(
         self,
@@ -251,12 +251,14 @@ class GenerateWorker(QObject):
         save_path: str,
         pulse_num: int | None,
         end_toa: float | None,
+        done: SignalInstance
     ) -> None:
         super().__init__()
         self.generator = generator
         self.save_path = save_path
         self.pulse_num = pulse_num
         self.end_toa = end_toa
+        self.done = done
     #enddef
 
     def do_work(self) -> None:
@@ -278,7 +280,6 @@ class GenerateWorker(QObject):
             #endwith
         #endif
         self.done.emit()
-        QThread.currentThread().quit()
     #enddef
 #endclass
 
@@ -291,6 +292,7 @@ class RadarGeneratorApp(QMainWindow):
     _radar_config_panel: RadarConfigPanel
     _plot_widget: pg.GraphicsLayoutWidget
     _radar_id: int = 0
+    _generate_done: Signal = Signal()
 
     def __init__(self) -> None:
         super().__init__()
@@ -514,13 +516,22 @@ class RadarGeneratorApp(QMainWindow):
                 #endif
                 nonlocal t
                 t = QThread()
-                worker = GenerateWorker(g, save_path, dialog.pulse_num(), dialog.end_toa())
+                worker = GenerateWorker(
+                    g,
+                    save_path,
+                    dialog.pulse_num(),
+                    dialog.end_toa(),
+                    self._generate_done
+                )
                 t.started.connect(worker.do_work)
-                worker.done.connect(lambda: QMessageBox(text="generate done").exec())
                 worker.moveToThread(t)
                 t.start()
             #endtry
         #enddef
         generate_button.clicked.connect(generate)
+        def generate_done() -> None:
+            QMessageBox(text="generate done").exec()
+        #enddef
+        self._generate_done.connect(generate_done)
     #enddef
 #endclass
