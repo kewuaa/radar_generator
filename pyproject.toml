@@ -9,6 +9,7 @@ dependencies = [
     "pyqtgraph>=0.13.7",
     "pyside6-essentials>=6.8.2.1",
     "tomli>=2.2.1",
+    "tomli-w>=1.2.0",
 ]
 
 [dependency-groups]

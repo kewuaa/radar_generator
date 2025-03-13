@@ -1,3 +1,7 @@
+from pathlib import Path
+
+import tomli
+import tomli_w
 import numpy as np
 import pandas as pd
 import pyqtgraph as pg
@@ -405,11 +409,47 @@ class RadarGeneratorApp(QMainWindow):
         spacer = QSpacerItem(0, 0, QSizePolicy.Policy.Expanding)
         hbox.addItem(spacer)
 
+        load_config_button = QPushButton("load config")
+        hbox.addWidget(load_config_button)
+
         preview_button = QPushButton("preview")
         hbox.addWidget(preview_button)
 
         generate_button = QPushButton("generate")
         hbox.addWidget(generate_button)
+
+        def load_config() -> None:
+            file_dialog = QFileDialog()
+            file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
+            file_dialog.setNameFilter("*.toml")
+            file_dialog.setDirectory(".")
+            file_dialog.setOption(QFileDialog.Option.DontUseNativeDialog)
+            file_dialog.exec()
+            config_path = ""
+            if file_dialog.result() == QFileDialog.DialogCode.Accepted:
+                config_path = file_dialog.selectedFiles()[0]
+            else:
+                return
+            #endif
+            with open(config_path, "rb") as f:
+                config = tomli.load(f)
+            #endwith
+            assert "radar" in config and isinstance(config["radar"], list)
+            if not config["radar"]:
+                QMessageBox(text="empty radar").exec()
+                return
+            #endif
+            if config["radar"] and not self._radar_config_panel.isEnabled():
+                self._radar_config_panel.setEnabled(True)
+            #endif
+            for radar in config["radar"]:
+                # utils.dict2snapshot(radar)
+                self._radars.append(radar)
+                self._radar_panel.addItem(f"radar{self._get_radar_id()}")
+            #endfor
+            self._radar_panel.setCurrentRow(len(self._radars)-1)
+        #enddef
+        load_config_button.clicked.connect(load_config)
 
         def scatterplot(
             plot: pg.PlotItem,
@@ -480,6 +520,7 @@ class RadarGeneratorApp(QMainWindow):
         preview_button.clicked.connect(preview)
 
         t: QThread
+        save_path: str = ""
         def generate() -> None:
             if not self._radars:
                 QMessageBox(text="no radar configuration").exec()
@@ -508,7 +549,7 @@ class RadarGeneratorApp(QMainWindow):
                 file_dialog.setDirectory(".")
                 file_dialog.setOption(QFileDialog.Option.DontUseNativeDialog)
                 file_dialog.exec()
-                save_path = ""
+                nonlocal save_path
                 if file_dialog.result() == QFileDialog.DialogCode.Accepted:
                     save_path = file_dialog.selectedFiles()[0]
                 else:
@@ -530,6 +571,14 @@ class RadarGeneratorApp(QMainWindow):
         #enddef
         generate_button.clicked.connect(generate)
         def generate_done() -> None:
+            nonlocal t
+            t.quit()
+            t.wait()
+            path = Path(save_path)
+            config_path = path.parent / f"{path.stem}_config.toml"
+            with open(config_path, "wb") as f:
+                tomli_w.dump({"radar": self._radars}, f)
+            #endwith
             QMessageBox(text="generate done").exec()
         #enddef
         self._generate_done.connect(generate_done)
