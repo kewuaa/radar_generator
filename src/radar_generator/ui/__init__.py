@@ -419,8 +419,6 @@ class RadarGeneratorApp(QMainWindow):
             file_dialog = QFileDialog()
             file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
             file_dialog.setNameFilter("*.toml")
-            file_dialog.setDirectory(".")
-            file_dialog.setOption(QFileDialog.Option.DontUseNativeDialog)
             file_dialog.exec()
             config_path = ""
             if file_dialog.result() == QFileDialog.DialogCode.Accepted:
@@ -543,8 +541,6 @@ class RadarGeneratorApp(QMainWindow):
                 file_dialog.setNameFilter("*.csv")
                 file_dialog.setDefaultSuffix("csv")
                 file_dialog.setFileMode(QFileDialog.FileMode.AnyFile)
-                file_dialog.setDirectory(".")
-                file_dialog.setOption(QFileDialog.Option.DontUseNativeDialog)
                 file_dialog.exec()
                 nonlocal save_path
                 if file_dialog.result() == QFileDialog.DialogCode.Accepted:
