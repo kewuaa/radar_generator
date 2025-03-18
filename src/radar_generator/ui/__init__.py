@@ -379,7 +379,7 @@ class RadarGeneratorApp(QMainWindow):
         previous_row: int = -1
         def switch_config(row: int) -> None:
             nonlocal previous_row
-            if previous_row >= 0 and self._radars:
+            if 0 <= previous_row < len(self._radars):
                 self._radars[previous_row] = self._radar_config_panel.snapshot()
             #endif
             previous_row = row
